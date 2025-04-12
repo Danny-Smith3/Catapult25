@@ -10,3 +10,6 @@ dependencies:
   - matplotlib
   - scikit-learn
   - tensorflow
+  - xgboost
+  - statsmodels
+  - greyrelation
