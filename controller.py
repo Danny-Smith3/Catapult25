@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from sentimentAI import generate_sentiment_summary, StockSentimentRequest
 
@@ -7,17 +7,14 @@ app = FastAPI()
 # Allow frontend to access the backend (CORS)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Replace with your React frontend URL
+    allow_origins=["https://bull-it.vercel.app/"],  # Replace with your React frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-router = APIRouter(prefix="/catapult25/pname")
-
 # Get Predictor Model Instance
 
-# Get Sentiment Analysis Model Instance
 
 @app.get("/stock/{ticker}")
 async def get_stock_stats(ticker: str):
@@ -35,4 +32,3 @@ async def get_stock_sentiment(ticker: str):
     result = generate_sentiment_summary(request)
     return result
 
-app.include_router(router)

@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import os
 
 # Load model for RAG-like summarization/analysis
-generator = pipeline("text-generation", model="tiiuae/falcon-7b-instruct", framework="pt")
+generator = pipeline("text2text-generation", model="google/flan-t5-base", framework="pt")
 
 # Sentiment analyzer
 analyzer = SentimentIntensityAnalyzer()
@@ -32,7 +32,13 @@ def generate_sentiment_summary(payload: StockSentimentRequest):
         description = article.get("description", "")
         content = f"{title}. {description}"
         sentiment = analyzer.polarity_scores(content)["compound"]
-        articles.append({"title": title, "sentiment": sentiment})
+        articles.append({     
+            "title": title,
+            "description": description,
+            "source_id": article.get("source_id", "Unknown Source"),
+            "pubDate": article.get("pubDate", "Unknown Date"),
+            "sentiment": sentiment
+        })
 
     avg_score = sum(a['sentiment'] for a in articles) / len(articles)
 
@@ -45,8 +51,9 @@ Stock: {payload.ticker}
 Headlines:
 """
     for a in articles:
+        desc = a.get("description") or ""
         desc = desc[:150] + "..." if len(desc) > 150 else desc
-        prompt += f'- "{a["title"]}" — {desc} (Sentiment: {a["sentiment"]}, Source: {source}, Date: {published})\n'
+        prompt += f'- "{a["title"]}" — {desc} (Sentiment: {a["sentiment"]}, Source: {a["source_id"]}, Date: {a["pubDate"]})\n'
 
     prompt += f"\nAverage Sentiment Score: {round(avg_score, 4)}\nConclusion:"
 
