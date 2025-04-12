@@ -16,6 +16,13 @@ Add Conda to path
 Creating environment  
 `conda env create -f environment.yml`
 
+Might need to do
+`conda init` 
+Before activation
+
+And 
+`source ~/.bashrc`
+
 Activate  
 `conda activate catapult`
 
