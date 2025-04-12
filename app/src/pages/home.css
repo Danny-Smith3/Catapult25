@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+.home-app {
+  text-align: center;
+}
+
+.home-app-header {
+  background-color: #2f2f2f;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.home-app-name {
+  font-size: 4em;
+  font-weight: bold;
+  padding-top: 10%;
+}
+
+.home-ticker-search input {
+  width: 100%; 
+  padding: 10px 15px; 
+  font-size: 1.2em; 
+  border: 2px solid #8c8c8c; 
+  border-radius: 10px; 
+  outline: none; 
+  box-sizing: border-box; 
+  background-color: #585757;
+  color: white;
+  font-family: "Space Mono", monospace;
+}
+
+.home-ticker-search input::placeholder {
+  font-family: "Space Mono", monospace;
+  color: #8c8c8c; 
+  opacity: 0.7; 
+}
+
+.home-ticker-search input:focus {
+  border-color: #46ad65; 
+  box-shadow: 0 0 5px rgba(62, 134, 83, 0.5); 
+}
+
+.home-search-bar {
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 5%;
+}
+
+.home-search-button {
+  background-color: #3e8653; /* Button background color */
+  color: white; /* Icon color */
+  border: none; /* Remove default border */
+  border-radius: 8px; /* Rounded edges */
+  padding: 15px 15px; /* Add padding */
+  cursor: pointer; /* Change cursor to pointer */
+  font-size: 1.2em; /* Adjust icon size */
+  display: flex; /* Center the icon */
+  align-items: center; /* Align icon vertically */
+  justify-content: center; /* Align icon horizontally */
+}
+
+.home-search-button:hover {
+  background-color: #46ad65; /* Change background on hover */
+}
