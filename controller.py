@@ -3,6 +3,7 @@ from stockinfo import get_stock_data
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sentimentAI import generate_sentiment_summary, StockSentimentRequest
 
 app = FastAPI()
 
@@ -17,7 +18,6 @@ app.add_middleware(
 
 # Get Predictor Model Instance
 
-# Get Sentiment Analysis Model Instance
 
 @app.get("/stock/{ticker}")
 async def get_stock_stats(ticker: str):
@@ -34,8 +34,8 @@ async def get_stock_graph(ticker: str):
     return f"Received request for prediction graph: {ticker}"
 
 @app.get("/sentiment/{ticker}")
-async def get_stock_graph(ticker: str):
+async def get_stock_sentiment(ticker: str):
+    request = StockSentimentRequest(ticker=ticker)
+    result = generate_sentiment_summary(request)
+    return result
 
-    return f"Received request for sentimnt analysis: {ticker}"
-
-app.include_router(router)
