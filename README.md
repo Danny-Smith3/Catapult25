@@ -10,6 +10,9 @@ Download installer for Conda
 Run installer  
 `bash Miniconda3-latest-Linux-x86_64.sh`
 
+Add Conda to path   
+`export PATH=~/miniconda3/bin:$PATH`
+
 Creating environment  
 `conda cat_env create -f environment.yml`
 
