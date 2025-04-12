@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sentimentAI import generate_sentiment_summary, StockSentimentRequest
 
 app = FastAPI()
 
@@ -29,8 +30,9 @@ async def get_stock_graph(ticker: str):
     return f"Received request for prediction graph: {ticker}"
 
 @app.get("/sentiment/{ticker}")
-async def get_stock_graph(ticker: str):
-
-    return f"Received request for sentimnt analysis: {ticker}"
+async def get_stock_sentiment(ticker: str):
+    request = StockSentimentRequest(ticker=ticker)
+    result = generate_sentiment_summary(request)
+    return result
 
 app.include_router(router)
