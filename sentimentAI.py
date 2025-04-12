@@ -9,6 +9,7 @@ import os
 generator = pipeline(
     "text-generation",
     model="microsoft/phi-1_5",
+    device=-1,
     framework="pt"
 )
 
@@ -24,7 +25,12 @@ class StockSentimentRequest(BaseModel):
 
 def generate_sentiment_summary(payload: StockSentimentRequest):
     query = f"{payload.ticker} stock"
-    response = newsdata_client.news_api(q=query, language='en', category='business', country='us')
+    response = ""
+    try:
+        response = newsdata_client.news_api(q=query, language='en', category='business', country='us')
+    except Exception as e:
+        return {"error": f"News API failed: {str(e)}"}
+
 
     if not response.get("results"):
         return {"message": "No news found for this ticker."}
@@ -47,7 +53,7 @@ def generate_sentiment_summary(payload: StockSentimentRequest):
 
     # Build prompt for Mixtral
     prompt = f"""
-You are a financial analyst AI. Based on the following news headlines and sentiment scores, analyze the market sentiment and provide a short-term outlook for the stock.
+You are a financial analyst AI (don't state you are a AI in the response). Based on the following news headlines and sentiment scores, analyze the market sentiment and provide a short-term outlook for the stock.
 
 Stock: {payload.ticker}
 
@@ -60,9 +66,21 @@ Headlines:
 
     # Generate conclusion
     result = generator(prompt, max_new_tokens=150, do_sample=True, temperature=0.7)
+
+    raw_output = result[0]["generated_text"]
+
+    # Extract clean conclusion (after 'Conclusion:' and before next section)
+    conclusion = ""
+    if "Conclusion:" in raw_output:
+        conclusion_block = raw_output.split("Conclusion:")[1]
+        conclusion = conclusion_block.strip().split("\n\n")[0].strip()
+    else:
+        conclusion = raw_output.strip()
+
+
     return {
         "ticker": payload.ticker,
         "average_sentiment": round(avg_score, 4),
-        "generated_conclusion": result[0]['generated_text'],
+        "generated_conclusion": conclusion,
         "articles_analyzed": len(articles)
     }
