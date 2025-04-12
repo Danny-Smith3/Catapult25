@@ -2,6 +2,8 @@ name: catapult
 channels:
   - conda-forge
   - defaults
+variables:
+  TRANSFORMERS_NO_TF: 1
 dependencies:
   - python=3.12
   - yfinance
@@ -14,4 +16,12 @@ dependencies:
   - uvicorn
   - xgboost
   - statsmodels
-  - greyrelation
+  - pydantic
+  - pip
+  - pip:
+      - newsdataapi
+      - vaderSentiment
+      - transformers
+      - torch
+      - python-dotenv
+      - accelerate
