@@ -2,7 +2,7 @@ from sentimentAI import generate_sentiment_summary, StockSentimentRequest
 
 if __name__ == "__main__":
     # Example test ticker
-    test_ticker = "AAPL"
+    test_ticker = "TSLA"
     request = StockSentimentRequest(ticker=test_ticker)
     
     # Call the function and print result
