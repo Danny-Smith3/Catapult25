@@ -27,7 +27,8 @@ Installs Needed:
   `conda activate catapult`
 
 Render Python Backend
-# https://catapult25.onrender.com
+`https://catapult25.onrender.com`
 
-# https://bull-it.vercel.app/
+Application
+`https://bull-it.vercel.app/`
 
