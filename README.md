@@ -14,8 +14,8 @@ Add Conda to path
 `export PATH=~/miniconda3/bin:$PATH`
 
 Creating environment  
-`conda cat_env create -f environment.yml`
+`conda env create -f environment.yml`
 
 Activate  
-`conda activate cat_env`
+`conda activate catapult`
 
