@@ -10,7 +10,7 @@ app = FastAPI()
 # Allow frontend to access the backend (CORS)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://bull-it.vercel.app/"],  # Replace with your React frontend URL
+    allow_origins=["*"],  # Replace with your React frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
