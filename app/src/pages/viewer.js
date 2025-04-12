@@ -8,9 +8,8 @@ const Viewer = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const {stockTicker} = location.state.stockTicker;
-    const {data} = location.state.stockData;
-    console.log(data);
+    const stockTicker = location.state.stockTicker;
+    const data = location.state.stockData;
 
     const search = (ticker) => {
         if (ticker === undefined || ticker === "") {
@@ -55,12 +54,12 @@ const Viewer = () => {
                             <p className='viewer-label-text'>52-wk low:</p>
                         </div>
                         <div className='viewer-stats-vals'>
-                        <p className='viewer-label-text'>{data['open']}</p>
-                            <p className='viewer-label-text'>{data['high']}</p>
-                            <p className='viewer-label-text'>{data['low']}</p>
-                            <p className='viewer-label-text'>{data['market_cap']}</p>
-                            <p className='viewer-label-text'>{data['pe_ratio']}</p>
-                            <p className='viewer-label-text'>{data['div_yield']}</p>
+                        <p className='viewer-label-text'>{parseFloat(data['open'].toFixed(2))}</p>
+                            <p className='viewer-label-text'>{parseFloat(data['high'].toFixed(2))}</p>
+                            <p className='viewer-label-text'>{parseFloat(data['low'].toFixed(2))}</p>
+                            <p className='viewer-label-text'>{data['market_cap']}T</p>
+                            <p className='viewer-label-text'>{parseFloat(data['pe_ratio'].toFixed(2))}</p>
+                            <p className='viewer-label-text'>0.{data['div_yield']}%</p>
                             <p className='viewer-label-text'>{data['52_week_high']}</p>
                             <p className='viewer-label-text'>{data['52_week_low']}</p>
                         </div>
@@ -78,11 +77,11 @@ const Viewer = () => {
                             <p className='viewer-label-text'>1Y:</p>
                         </div>
                         <div className='viewer-stats-vals'>
-                            <p className={100 > 100 ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>100</p>
-                            <p className={110 > 100 ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>110</p>
-                            <p className={120 > 100 ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>120</p>
-                            <p className={130 > 100 ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>130</p>
-                            <p className={140 > 100 ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>140</p>
+                            <p className={100 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>100</p>
+                            <p className={110 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>110</p>
+                            <p className={120 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>120</p>
+                            <p className={130 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>130</p>
+                            <p className={140 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>140</p>
                         </div>
                         <div className='viewer-stats-buff'></div>
                     </div>
