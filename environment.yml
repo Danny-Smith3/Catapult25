@@ -12,3 +12,6 @@ dependencies:
   - tensorflow
   - fastapi
   - uvicorn
+  - xgboost
+  - statsmodels
+  - greyrelation
