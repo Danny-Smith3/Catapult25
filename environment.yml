@@ -10,3 +10,5 @@ dependencies:
   - matplotlib
   - scikit-learn
   - tensorflow
+  - fastapi
+  - uvicorn
