@@ -2,28 +2,27 @@ name: catapult
 channels:
   - conda-forge
   - defaults
-variables:
-  TRANSFORMERS_NO_TF: 1
+  - pytorch
 dependencies:
   - python=3.12
-  - yfinance
+  - fastapi
+  - uvicorn
   - numpy
   - pandas
   - matplotlib
   - scikit-learn
-  - tensorflow
-  - fastapi
-  - uvicorn
   - xgboost
   - statsmodels
+  - tensorflow
+  - torch
   - pydantic
+  - joblib
+  - requests
+  - huggingface_hub
+  - transformers
+  - python-dotenv
+  - accelerate
   - pip
   - pip:
-      - newsdataapi
       - vaderSentiment
-      - transformers
-      - torch
-      - python-dotenv
-      - accelerate
-      - boto3
-      - joblib 
+      - newsdataapi
