@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from transformers import pipeline
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from newsdataapi import NewsDataApiClient
 from dotenv import load_dotenv

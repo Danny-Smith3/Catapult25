@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sentimentAI import generate_sentiment_summary, StockSentimentRequest
+from transformers import pipeline
 
 app = FastAPI()
 
