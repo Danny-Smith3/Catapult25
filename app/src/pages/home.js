@@ -17,6 +17,28 @@ const getData = (ticker) => fetch(`${API_BASE}/stock/${ticker}`)
             return null;
         });
 
+/*const getPredict = (ticker) => fetch(`${API_BASE}/predictor/${ticker}`)
+        .then((res) => res.json())
+        .then((data) => {
+            return data
+        })
+        .catch((error) => {
+            return null
+        })*/
+
+const getPredict = {
+  x: [
+      '2025-01-01', '2025-01-02', '2025-01-03', '2025-01-04', '2025-01-05',
+      '2025-01-06', '2025-01-07', '2025-01-08', '2025-01-09', '2025-01-10',
+      '2025-01-11', '2025-01-12', '2025-01-13', '2025-01-14', '2025-01-15'
+    ],
+  y: [
+      150.23, 152.88, 151.76, 153.21, 154.10,
+      153.75, 155.12, 156.03, 154.80, 153.90,
+      155.30, 156.50, 157.20, 156.85, 158.00
+    ]
+}
+
 function Home() {
   const [ticker, setTicker] = useState();
   const [loading, setLoading] = useState(false);
@@ -30,17 +52,25 @@ function Home() {
     else {
       setLoading(true);
       const readData = await getData(ticker);
+      const readPredict = getPredict;
       if (readData === null || readData['error'] != null || readData['open'] === null) {
           await handleError(ticker);
           setTicker("");
           setLoading(false);
           return;
       }
+      if (readPredict === null || readPredict.x.length === 0 || readPredict.y.length === 0) {
+        await handleError(ticker);
+        setTicker("");
+        setLoading(false);
+        return;
+      }
       const data = readData;
+      const predict = readPredict;
       setLoading(false);
       
       navigate('/viewer', {
-        state:  {stockTicker: ticker, stockData: data} 
+        state:  {stockTicker: ticker, stockData: data, stockPredict: predict} 
       });
     }
   }

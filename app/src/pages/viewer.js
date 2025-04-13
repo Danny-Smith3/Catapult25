@@ -4,6 +4,7 @@ import SearchBar from '../components/searchbar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ErrorPopup from '../components/errorpopup';
 import BullitLogo from '../assets/bullit64.png';
+import StockChart from '../components/stockChart';
 
 const API_BASE = "https://catapult25.onrender.com"
 
@@ -16,6 +17,32 @@ const getData = (ticker) => fetch(`${API_BASE}/stock/${ticker}`)
             return null;
         });
 
+/*const getPredict = (ticker) => fetch(`${API_BASE}/predictor/${ticker}`)
+        .then((res) => res.json())
+        .then((data) => {
+            return data
+        })
+        .catch((error) => {
+            return null
+        })*/
+
+const getPredict = {
+    x: [
+        '2025-01-01', '2025-01-02', '2025-01-03', '2025-01-04', '2025-01-05',
+        '2025-01-06', '2025-01-07', '2025-01-08', '2025-01-09', '2025-01-10',
+        '2025-01-11', '2025-01-12', '2025-01-13', '2025-01-14', '2025-01-15'
+      ],
+    y: [
+        150.23, 152.88, 151.76, 153.21, 154.10,
+        153.75, 155.12, 156.03, 154.80, 153.90,
+        155.30, 156.50, 157.20, 156.85, 158.00
+      ]
+}
+
+/* const today = new Date().toISOString().split('T')[0]; Use when real stuff is working*/
+
+const today = '2025-01-10'
+
 const Viewer = () => {
     const [ticker, setTicker] = useState();
     const [loading, setLoading] = useState(false);
@@ -25,6 +52,7 @@ const Viewer = () => {
     const location = useLocation();
     let stockTicker = location.state.stockTicker;
     let data = location.state.stockData;
+    let predict = location.state.stockPredict;
 
     const search = async (ticker) => {
         if (ticker === undefined || ticker === "") {
@@ -32,6 +60,7 @@ const Viewer = () => {
         }
         setLoading(true);
         const readData = await getData(ticker);
+        const readPredict = getPredict;
         console.log(readData);
         if (readData === null || readData['error'] != null || readData['open'] === null) {
             await handleError(ticker);
@@ -39,12 +68,19 @@ const Viewer = () => {
             setLoading(false);
             return;
         }
+        if (readPredict === null || readPredict.x.length === 0 || readPredict.y.length === 0) {
+            await handleError(ticker);
+            setTicker("");
+            setLoading(false);
+            return;
+        }
         data = readData;
         stockTicker = ticker;
+        predict = readPredict;
         setTicker("");
         setLoading(false);
         navigate('/viewer', {
-            state:  {stockTicker: ticker, stockData: data} 
+            state:  {stockTicker: ticker, stockData: data, stockPredict: predict} 
         });
     }
 
@@ -125,7 +161,7 @@ const Viewer = () => {
                 </div>
                 <div className='viewer-charts'>
                     <div className='viewer-graph'>
-                        <p>{stockTicker} Graph</p>
+                        <StockChart xData={predict.x} yData={predict.y} splitDate={today}/>
                     </div>
                     <div className='viewer-data'>
                         <p>{stockTicker} Data</p>
