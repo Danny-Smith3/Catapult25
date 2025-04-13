@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sentimentAI import generate_sentiment_summary, StockSentimentRequest
-from llm import get_generator
+from llm_loader import download_and_load_model
 
 app = FastAPI()
 
@@ -16,9 +16,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# @app.on_event("startup")
-# def startup():
-#     get_generator()
+@app.on_event("startup")
+def startup():
+    download_and_load_model()
 
 # Get Predictor Model Instance
 

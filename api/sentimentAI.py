@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from newsdataapi import NewsDataApiClient
 from dotenv import load_dotenv
-from llm import get_generator
+from llmLoader import LLM_PIPELINE
 import os
 
 # Sentiment analyzer
@@ -44,8 +44,6 @@ def generate_sentiment_summary(payload: StockSentimentRequest):
 
     avg_score = sum(a['sentiment'] for a in articles) / len(articles)
 
-    generator = get_generator()
-
     # Build prompt for Mixtral
     prompt = f"""
 You are a financial analyst AI (don't state you are a AI in the response). Based on the following news headlines and sentiment scores, analyze the market sentiment and provide a short-term outlook for the stock.
@@ -60,7 +58,7 @@ Headlines:
     prompt += f"\nAverage Sentiment Score: {round(avg_score, 4)}\nConclusion:"
 
     # Generate conclusion
-    result = generator(prompt, max_new_tokens=150, do_sample=True, temperature=0.7)
+    result = LLM_PIPELINE(prompt, max_new_tokens=150, do_sample=True, temperature=0.7)
 
     raw_output = result[0]["generated_text"]
 
