@@ -60,7 +60,10 @@ const Viewer = () => {
     const [predictionLoading, setPredictionLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [sentiment, setSentiment] = useState({'average_sentiment': 0.5, 'generated_conclusion': 'No sentiment data available.', 'articles_analyzed': 0});
-    const [predict, setPredict] = useState({'x': [], 'y': []});
+    const [predict, setPredict] = useState({'dates': [], 'prices': []});
+
+    const [dates, setDates] = useState([]);
+    const [prices, setPrices] = useState([]);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -102,11 +105,18 @@ const Viewer = () => {
             setPredictionLoading(true);
             const readSentiment = await getPredict(stockTicker);
             if (readSentiment === null || readSentiment['error'] != null || readSentiment['average_sentiment'] === null) {
-                setPredict({'x': [], 'y': []});
+                setPredict({'dates': [], 'prices': []});
                 setPredictionLoading(false);
                 return;
             }
             setSentiment(readSentiment);
+            const filtered = sentiment['dates'].map((date, index) => ({
+                date,
+                price: sentiment['prices'][index]
+            }))
+            .filter((item) => new Date(item.date) >= new Date(today));
+            setDates(filtered.map((item) => item.date));
+            setPrices(filtered.map((item) => item.price));
             setPredictionLoading(false);
         };
     
@@ -204,11 +214,11 @@ const Viewer = () => {
                             <p className='viewer-label-text'>1Y:</p>
                         </div>
                         {predictionLoading ? <div className="loading-circle"></div> : <div className='viewer-stats-vals'>
-                            <p className={100 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>100</p>
-                            <p className={110 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>110</p>
-                            <p className={120 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>120</p>
-                            <p className={130 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>130</p>
-                            <p className={140 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>140</p>
+                            <p className={prices[1] > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>{prices[1]}</p>
+                            <p className={prices[5] > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>{prices[5]}</p>
+                            <p className={prices[22] > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>{prices[22]}</p>
+                            <p className={prices[66] > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>{prices[66]}</p>
+                            <p className={prices[prices.length - 1] > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>{prices[prices.length - 1]}</p>
                         </div>}
                         <div className='viewer-stats-buff'></div>
                     </div>
