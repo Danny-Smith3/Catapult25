@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { useEffect } from 'react';
 import './viewer.css';
 import SearchBar from '../components/searchbar';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -17,24 +18,61 @@ const getData = (ticker) => fetch(`${API_BASE}/stock/${ticker}`)
         });
 
 const getSentiment = (ticker) => fetch(`${API_BASE}/sentiment/${ticker}`)
-        .then((response) => response.json())
-        .then((data) => {
-            return data;
-        })
-        .catch((error) => {
-            return null;
-        });
+    .then((response) => response.json())
+    .then((data) => {
+        return data;
+    })
+    .catch((error) => {
+        return null;
+    });
 
 const Viewer = () => {
     const [ticker, setTicker] = useState();
     const [loading, setLoading] = useState(false);
+    const [sentimentLoading, setSentimentLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
+    const [sentiment, setSentiment] = useState({'average_sentiment': 0.5, 'generated_conclusion': 'No sentiment data available.', 'articles_analyzed': 0});
 
     const navigate = useNavigate();
     const location = useLocation();
-    let stockTicker = location.state.stockTicker;
+    const stockTicker = location.state?.stockTicker;
+
     let data = location.state.stockData;
-    let sentiment = {'average_sentiment': 0.16734, 'generated_conclusion': 'This is a bad stock to buy. It will not increase at all according to multiple sources that are extremely reputable.'};
+    const didFetchSentiment = useRef(false);
+    const previousTicker = useRef(null);
+
+    useEffect(() => {
+        if (!stockTicker) {
+            return
+        };
+
+        if (previousTicker.current !== stockTicker) {
+            didFetchSentiment.current = false;
+            previousTicker.current = stockTicker;
+        }
+
+        if (didFetchSentiment.current) {
+            return
+        }
+
+        didFetchSentiment.current = true;
+
+        const fetchSentiment = async () => {
+            setSentimentLoading(true);
+            const readSentiment = await getSentiment(stockTicker);
+            if (readSentiment === null || readSentiment['error'] != null || readSentiment['average_sentiment'] === null) {
+                setSentiment({'average_sentiment': 0.5, 'generated_conclusion': 'No sentiment data available.', 'articles_analyzed': 0});
+                setSentimentLoading(false);
+                return;
+            }
+            setSentiment(readSentiment);
+            setSentimentLoading(false);
+        };
+    
+        if (stockTicker) {
+            fetchSentiment();
+        }
+    }, [stockTicker]);
 
     const search = async (ticker) => {
         if (ticker === undefined || ticker === "") {
@@ -42,7 +80,6 @@ const Viewer = () => {
         }
         setLoading(true);
         const readData = await getData(ticker);
-        console.log(readData);
         if (readData === null || readData['error'] != null || readData['open'] === null) {
             await handleError(ticker);
             setTicker("");
@@ -50,11 +87,11 @@ const Viewer = () => {
             return;
         }
         data = readData;
-        stockTicker = ticker;
         setTicker("");
         setLoading(false);
+        setSentimentLoading(true);
         navigate('/viewer', {
-            state:  {stockTicker: ticker, stockData: data} 
+            state:  {stockTicker: ticker, stockData: data}
         });
     }
 
@@ -139,7 +176,7 @@ const Viewer = () => {
                     </div>
                     <div className='viewer-data'>
                         <h2 className='viewer-data-title'>{data['name:']} Sentiment</h2>
-                        <div className='viewer-sentiment'>
+                        {sentimentLoading ? <div className="loading-circle"></div> : <div className='viewer-sentiment'>
                             <div className='viewer-ratings'>
                                 <div className='viewer-ratings-label'>
                                     <p className='viewer-label-text'>Raw Score: {parseFloat(sentiment['average_sentiment'].toFixed(3))}</p>
@@ -153,7 +190,7 @@ const Viewer = () => {
                                 <p className='viewer-label-text'>Conclusion:</p>
                                 <div className='viewer-conclusion-text'><p className='viewer-label-text'>{sentiment['generated_conclusion']}</p></div>
                             </div>
-                        </div>
+                        </div>}
                     </div>
                 </div>
                 <ErrorPopup message={errorMessage} />
