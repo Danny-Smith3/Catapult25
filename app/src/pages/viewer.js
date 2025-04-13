@@ -3,6 +3,7 @@ import './viewer.css';
 import SearchBar from '../components/searchbar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ErrorPopup from '../components/errorpopup';
+import BullitLogo from '../assets/bullit64.png';
 
 const API_BASE = "https://catapult25.onrender.com"
 
@@ -57,7 +58,10 @@ const Viewer = () => {
     return (
         <div className='viewer viewer-header'>
             <div className='viewer-top-bar'>
-                <h1 className='viewer-app-name' onClick={() => {navigate('/')}}>BULL-IT</h1>
+                <div className='viewer-logo'>
+                    <h1 className='viewer-app-name' onClick={() => {navigate('/')}}>BULL-IT</h1>
+                    <img src={BullitLogo} alt='logo'/>
+                </div>
                 <div className='viewer-search-bar'>
                     <div className='viewer-ticker-search'>
                         <SearchBar value={ticker} onChange={(e) => setTicker(e.target.value.toUpperCase())} onSearch={search}/>
