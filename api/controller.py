@@ -1,4 +1,3 @@
-import yfinance as yf
 from stockinfo import get_stock_data
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI
