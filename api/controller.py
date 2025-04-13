@@ -3,12 +3,9 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sentimentAI import generate_sentiment_summary, StockSentimentRequest
-from transformers import pipeline
+from llm import get_generator
 
 app = FastAPI()
-
-# Load the global sentiment analysis model
-generator = None
 
 # Allow frontend to access the backend (CORS)
 app.add_middleware(
@@ -20,14 +17,8 @@ app.add_middleware(
 )
 
 @app.on_event("startup")
-def load_model():
-    global generator
-    generator = pipeline(
-        "text-generation",
-        model="microsoft/phi-1_5",
-        device=-1,
-        framework="pt"
-    )
+def startup():
+    get_generator() 
 
 # Get Predictor Model Instance
 

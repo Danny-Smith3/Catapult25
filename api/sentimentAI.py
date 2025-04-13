@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from newsdataapi import NewsDataApiClient
 from dotenv import load_dotenv
-from controller import generator  # import the loaded model
+from llm import get_generator
 import os
 
 # Sentiment analyzer
@@ -43,6 +43,8 @@ def generate_sentiment_summary(payload: StockSentimentRequest):
         })
 
     avg_score = sum(a['sentiment'] for a in articles) / len(articles)
+
+    generator = get_generator()
 
     # Build prompt for Mixtral
     prompt = f"""
