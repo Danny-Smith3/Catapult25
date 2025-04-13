@@ -2,24 +2,57 @@ import React, { useState } from 'react';
 import './viewer.css';
 import SearchBar from '../components/searchbar';
 import { useNavigate, useLocation } from 'react-router-dom';
+import ErrorPopup from '../components/errorpopup';
+
+const API_BASE = "https://catapult25.onrender.com"
+
+const getData = (ticker) => fetch(`${API_BASE}/stock/${ticker}`)
+        .then((response) => response.json())
+        .then((data) => {
+            return data;
+        })
+        .catch((error) => {
+            return null;
+        });
 
 const Viewer = () => {
     const [ticker, setTicker] = useState();
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const navigate = useNavigate();
     const location = useLocation();
-    const stockTicker = location.state.stockTicker;
-    const data = location.state.stockData;
+    let stockTicker = location.state.stockTicker;
+    let data = location.state.stockData;
 
-    const search = (ticker) => {
+    const search = async (ticker) => {
         if (ticker === undefined || ticker === "") {
             return;
         }
+        setLoading(true);
+        const readData = await getData(ticker);
+        console.log(readData);
+        if (readData === null || readData['error'] != null || readData['open'] === null) {
+            await handleError(ticker);
+            setTicker("");
+            setLoading(false);
+            return;
+        }
+        data = readData;
+        stockTicker = ticker;
         setTicker("");
+        setLoading(false);
         navigate('/viewer', {
-            state: { stockTicker: ticker }
+            state:  {stockTicker: ticker, stockData: data} 
         });
     }
+
+    const handleError = async (ticker) => {
+        setErrorMessage('An error occurred! ' + ticker + ' is not a valid ticker.');
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 3000);
+      };
 
     return (
         <div className='viewer viewer-header'>
@@ -37,7 +70,7 @@ const Viewer = () => {
                 </div>
                 
             </div>
-            <div className='viewer-content'>
+            {loading ? <div className="loading-circle"></div> : <div className='viewer-content'>
                 <div className='viewer-sidebar'>
                     <h1 className='viewer-title viewer-label-text'>${stockTicker}</h1>
                     <h3 className='viewer-label-text'>{data['name']}</h3>
@@ -94,7 +127,8 @@ const Viewer = () => {
                         <p>{stockTicker} Data</p>
                     </div>
                 </div>
-            </div>
+                <ErrorPopup message={errorMessage} />
+            </div>}
         </div>
 
     );
