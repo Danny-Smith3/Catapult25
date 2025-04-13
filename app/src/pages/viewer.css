@@ -80,7 +80,7 @@
     align-items: center;
     justify-content: space-between;
     width: 95%;
-    padding: 0 5%;
+    padding: 0 2.5%;
     background-color: #585757;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Add shadow for elevation */
     position: relative; /* Ensure it stays above other elements */
