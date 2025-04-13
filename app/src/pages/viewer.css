@@ -10,7 +10,7 @@
 
 .viewer-ticker-search input {
   width: 100%; 
-  padding: 10px 15px; 
+  padding: 2% 3%; 
   font-size: 1.2em; 
   border: 2px solid #8c8c8c; 
   border-radius: 10px; 
@@ -19,7 +19,7 @@
   background-color: #585757;
   color: white;
   font-family: "Space Mono", monospace;
-  max-width: 300px; /* Set a max width for the input */
+  max-width: 100%; /* Set a max width for the input */
   zoom: 0.7;
 }
 
@@ -46,7 +46,7 @@
   color: white; /* Icon color */
   border: none; /* Remove default border */
   border-radius: 8px; /* Rounded edges */
-  padding: 15px 15px; /* Add padding */
+  padding: 45% 45%; /* Add padding */
   cursor: pointer; /* Change cursor to pointer */
   font-size: 1.2em; /* Adjust icon size */
   display: flex; /* Center the icon */
@@ -63,6 +63,8 @@
 
 .viewer {
     text-align: center;
+    cursor: default;
+    overflow: hidden;
 }
   
 .viewer-header {
@@ -101,7 +103,7 @@
     flex-direction: row;
     align-items: center;
     width: 100%;
-    padding: 20px;
+    padding: 2%;
     box-sizing: border-box;
     height: 100%;
     gap: 2%;
@@ -131,7 +133,7 @@
     background-color: #2f2f2f;
     box-sizing: border-box;
     border-radius: 8px;
-    gap: 5%;
+    gap: 4%;
 }
 
 .viewer-graph {
@@ -157,8 +159,8 @@
 }
 
 .viewer-title {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 2%;
+  padding-bottom: 2%;
   font-family: "Space Mono", monospace;
 }
 
@@ -174,7 +176,7 @@
 
 .viewer-stats p {
   margin: 0;
-  padding: 2px;
+  padding: 1.5%;
 }
 
 .viewer-stats-buff {
@@ -207,6 +209,72 @@
 
 .viewer-value-red {
   color: #e63946;
+}
+
+.viewer-sentiment {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  box-sizing: border-box;
+  font-size: 1em;
+  height: 100%;
+}
+
+.viewer-ratings {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: center;
+  height: auto;
+  padding-bottom: 1em;
+  box-sizing: border-box;
+}
+
+.viewer-ratings-buff {
+  width: 10%;
+}
+
+.viewer-ratings-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5em 1em;
+  font-size: 1em;
+  width: 80%;
+  gap: 5%;
+}
+
+.viewer-sentiment-buff {
+  height: 10%;
+}
+
+.viewer-conclusion {
+  height: 100%;
+  display: flex;
+  height: 35%;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  font-size: 1em;
+}
+
+.viewer-conclusion-text {
+  width: 80%;
+  height: 100%;
+  font-size: 1em;
+  color: white;
+  text-align: justify;
+}
+
+.viewer-data-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 0;
+  margin-top: 2%;
+  padding: 0;
 }
 
 
