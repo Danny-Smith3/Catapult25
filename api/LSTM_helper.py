@@ -1,15 +1,11 @@
-from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-import os
 import yfinance as yf
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from datetime import datetime, timedelta
-import matplotlib.dates as mdates
 from LSTMLoader import LOADED_MODELS
-from LSTMLoader import download_extract_and_load_lstm_models
 
 
 # RSI Compute function
@@ -65,7 +61,6 @@ def compute_sharpe_ratio(data, window=14, risk_free_rate=0):
 
 
 def get_predicted_price(ticker):
-    download_extract_and_load_lstm_models()
     # --- 1. Find the Loaded Model ---
     model_entry = next((m for m in LOADED_MODELS if m["name"].lower() == ticker.lower()), None)
     if model_entry is None:

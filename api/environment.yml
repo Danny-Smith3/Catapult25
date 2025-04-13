@@ -5,6 +5,7 @@ channels:
   - pytorch
 dependencies:
   - python=3.12
+  - tensorflow
   - fastapi
   - uvicorn
   - numpy
@@ -13,7 +14,6 @@ dependencies:
   - scikit-learn
   - xgboost
   - statsmodels
-  - tensorflow
   - torch
   - pydantic
   - joblib
