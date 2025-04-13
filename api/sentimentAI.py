@@ -82,5 +82,6 @@ Headlines:
         "ticker": payload.ticker,
         "average_sentiment": round(avg_score, 4),
         "generated_conclusion": conclusion,
-        "articles_analyzed": len(articles)
+        "articles_analyzed": len(articles),
+        "articles": articles
     }
