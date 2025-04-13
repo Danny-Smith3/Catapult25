@@ -57,22 +57,23 @@ const Viewer = () => {
     const [ticker, setTicker] = useState();
     const [loading, setLoading] = useState(false);
     const [sentimentLoading, setSentimentLoading] = useState(true);
+    const [predictionLoading, setPredictionLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [sentiment, setSentiment] = useState({'average_sentiment': 0.5, 'generated_conclusion': 'No sentiment data available.', 'articles_analyzed': 0});
+    const [predict, setPredict] = useState({'x': [], 'y': []});
 
     const navigate = useNavigate();
     const location = useLocation();
     const stockTicker = location.state?.stockTicker;
 
     let data = location.state.stockData;
-    let predict = location.state.stockPredict;
     const didFetchSentiment = useRef(false);
     const previousTicker = useRef(null);
 
     useEffect(() => {
         if (!stockTicker) {
             return
-        };
+        }
 
         if (previousTicker.current !== stockTicker) {
             didFetchSentiment.current = false;
@@ -96,8 +97,21 @@ const Viewer = () => {
             setSentiment(readSentiment);
             setSentimentLoading(false);
         };
+
+        const fetchPrediction = async () => {
+            setPredictionLoading(true);
+            const readSentiment = await getPredict(stockTicker);
+            if (readSentiment === null || readSentiment['error'] != null || readSentiment['average_sentiment'] === null) {
+                setPredict({'x': [], 'y': []});
+                setPredictionLoading(false);
+                return;
+            }
+            setSentiment(readSentiment);
+            setPredictionLoading(false);
+        };
     
         if (stockTicker) {
+            fetchPrediction();
             fetchSentiment();
         }
     }, [stockTicker]);
@@ -108,8 +122,6 @@ const Viewer = () => {
         }
         setLoading(true);
         const readData = await getData(ticker);
-        const readPredict = await getPredict(ticker)
-        /*const readPredict = getPredict;*/
         console.log(readData);
         if (readData === null || readData['error'] != null || readData['open'] === null) {
             await handleError(ticker);
@@ -117,19 +129,12 @@ const Viewer = () => {
             setLoading(false);
             return;
         }
-        if (readPredict === null || readPredict.x.length === 0 || readPredict.y.length === 0) {
-            await handleError(ticker);
-            setTicker("");
-            setLoading(false);
-            return;
-        }
         data = readData;
-        predict = readPredict;
         setTicker("");
         setLoading(false);
         setSentimentLoading(true);
         navigate('/viewer', {
-            state:  {stockTicker: ticker, stockData: data, stockPredict: predict} 
+            state:  {stockTicker: ticker, stockData: data} 
         });
     }
 
@@ -198,20 +203,20 @@ const Viewer = () => {
                             <p className='viewer-label-text'>3M:</p>
                             <p className='viewer-label-text'>1Y:</p>
                         </div>
-                        <div className='viewer-stats-vals'>
+                        {predictionLoading ? <div className="loading-circle"></div> : <div className='viewer-stats-vals'>
                             <p className={100 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>100</p>
                             <p className={110 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>110</p>
                             <p className={120 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>120</p>
                             <p className={130 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>130</p>
                             <p className={140 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>140</p>
-                        </div>
+                        </div>}
                         <div className='viewer-stats-buff'></div>
                     </div>
                 </div>
                 <div className='viewer-charts'>
-                    <div className='viewer-graph'>
+                    {predictionLoading ? <div className="loading-circle"></div> : <div className='viewer-graph'>
                         <StockChart xData={predict['dates']} yData={predict['prices']} splitDate={today}/>
-                    </div>
+                    </div>}
                     <div className='viewer-data'>
                         <h2 className='viewer-data-title'>{data['name:']} Sentiment</h2>
                         {sentimentLoading ? <div className="loading-circle"></div> : <div className='viewer-sentiment'>
