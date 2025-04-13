@@ -5,6 +5,7 @@
     font-size: 2em;
     padding: 0;
     margin: 0;
+    color: #3e8653;
 }
 
 .viewer-ticker-search input {
@@ -86,6 +87,13 @@
     position: relative; /* Ensure it stays above other elements */
     z-index: 10; /* Place it above other content */
     border-radius: 8px;
+}
+
+.viewer-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
 }
 
 .viewer-content {

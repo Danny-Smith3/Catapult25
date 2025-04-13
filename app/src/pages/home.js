@@ -4,6 +4,7 @@ import SearchBar from '../components/searchbar';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useNavigate } from 'react-router-dom';
 import ErrorPopup from '../components/errorpopup';
+import BullitLogo from '../assets/bullit256.png';
 
 const API_BASE = "https://catapult25.onrender.com"
 
@@ -54,6 +55,7 @@ function Home() {
   return (
     <div className="home-app">
       <div className="home-app-header">
+        <img src={BullitLogo} alt='logo'/>
         <h1 className="home-app-name">BULL-IT</h1>
         {loading ? <div className="loading-circle"></div> : <div className='home-search-bar'> 
             <div className='home-ticker-search'>
