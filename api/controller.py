@@ -38,3 +38,7 @@ async def get_stock_sentiment(ticker: str):
     result = generate_sentiment_summary(request)
     return result
 
+@app.get("/")
+def health_check():
+    return {"status": "ok"}
+
