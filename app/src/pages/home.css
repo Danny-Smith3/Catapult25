@@ -10,15 +10,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: start;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.home-app-header img {
+  padding-top: 5%;
 }
 
 .home-app-name {
   font-size: 4em;
   font-weight: bold;
-  padding-top: 10%;
+  margin-top: 0;
+  color: #3e8653;
 }
 
 .home-ticker-search input {
