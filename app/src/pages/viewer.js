@@ -43,6 +43,15 @@ const getPredict = {
 
 const today = '2025-01-10'
 
+const getSentiment = (ticker) => fetch(`${API_BASE}/sentiment/${ticker}`)
+        .then((response) => response.json())
+        .then((data) => {
+            return data;
+        })
+        .catch((error) => {
+            return null;
+        });
+
 const Viewer = () => {
     const [ticker, setTicker] = useState();
     const [loading, setLoading] = useState(false);
@@ -53,6 +62,7 @@ const Viewer = () => {
     let stockTicker = location.state.stockTicker;
     let data = location.state.stockData;
     let predict = location.state.stockPredict;
+    let sentiment = {'average_sentiment': 0.16734, 'generated_conclusion': 'This is a bad stock to buy. It will not increase at all according to multiple sources that are extremely reputable.'};
 
     const search = async (ticker) => {
         if (ticker === undefined || ticker === "") {
@@ -96,7 +106,7 @@ const Viewer = () => {
             <div className='viewer-top-bar'>
                 <div className='viewer-logo'>
                     <h1 className='viewer-app-name' onClick={() => {navigate('/')}}>BULL-IT</h1>
-                    <img src={BullitLogo} alt='logo'/>
+                    <img src={BullitLogo} alt='logo' onClick={() => {navigate('/')}}/>
                 </div>
                 <div className='viewer-search-bar'>
                     <div className='viewer-ticker-search'>
@@ -113,7 +123,7 @@ const Viewer = () => {
             {loading ? <div className="loading-circle"></div> : <div className='viewer-content'>
                 <div className='viewer-sidebar'>
                     <h1 className='viewer-title viewer-label-text'>${stockTicker}</h1>
-                    <h3 className='viewer-label-text'>{data['name']}</h3>
+                    <h3 className='viewer-label-text'>{data['name:']}</h3>
                     <div className='viewer-stats'>
                         <div className='viewer-stats-buff'></div>
                         <div className='viewer-stats-label'>
@@ -164,7 +174,22 @@ const Viewer = () => {
                         <StockChart xData={predict.x} yData={predict.y} splitDate={today}/>
                     </div>
                     <div className='viewer-data'>
-                        <p>{stockTicker} Data</p>
+                        <h2 className='viewer-data-title'>{data['name:']} Sentiment</h2>
+                        <div className='viewer-sentiment'>
+                            <div className='viewer-ratings'>
+                                <div className='viewer-ratings-label'>
+                                    <p className='viewer-label-text'>Raw Score: {parseFloat(sentiment['average_sentiment'].toFixed(3))}</p>
+                                    <p className='viewer-label-text'>Grade: {sentiment['average_sentiment'] < 0.2 ? 'F' : 
+                                                                      sentiment['average_sentiment'] < 0.4 ? 'D' :
+                                                                      sentiment['average_sentiment'] < 0.6 ? 'C' :
+                                                                      sentiment['average_sentiment'] < 0.8 ? 'B' : 'A'}</p>
+                                </div>
+                            </div>
+                            <div className='viewer-conclusion'>
+                                <p className='viewer-label-text'>Conclusion:</p>
+                                <div className='viewer-conclusion-text'><p className='viewer-label-text'>{sentiment['generated_conclusion']}</p></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <ErrorPopup message={errorMessage} />
