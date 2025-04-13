@@ -1,16 +1,24 @@
+import os
 from pydantic import BaseModel
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from newsdataapi import NewsDataApiClient
 from dotenv import load_dotenv
-from llmLoader import LLM_PIPELINE
-import os
+from huggingface_hub import InferenceClient
+
+# Load environment variables
+load_dotenv()
+HF_API_KEY = os.getenv("HF_API_KEY")
+NEWSDATA_API_KEY = os.getenv("NEWSDATA_API_KEY")
+
+client = InferenceClient(
+    provider="hf-inference",
+    api_key=HF_API_KEY
+)
 
 # Sentiment analyzer
 analyzer = SentimentIntensityAnalyzer()
 
 # NewsData.io setup
-load_dotenv()
-NEWSDATA_API_KEY = os.getenv("NEWSDATA_API_KEY")
 newsdata_client = NewsDataApiClient(apikey=NEWSDATA_API_KEY)
 
 class StockSentimentRequest(BaseModel):
@@ -57,23 +65,23 @@ Headlines:
 
     prompt += f"\nAverage Sentiment Score: {round(avg_score, 4)}\nConclusion:"
 
-    # Generate conclusion
-    result = LLM_PIPELINE(prompt, max_new_tokens=150, do_sample=True, temperature=0.7)
-
-    raw_output = result[0]["generated_text"]
-
-    # Extract clean conclusion (after 'Conclusion:' and before next section)
-    conclusion = ""
-    if "Conclusion:" in raw_output:
-        conclusion_block = raw_output.split("Conclusion:")[1]
-        conclusion = conclusion_block.strip().split("\n\n")[0].strip()
-    else:
-        conclusion = raw_output.strip()
-
+    # Generate summary via LLaMA 3
+    try:
+        completion = client.chat.completions.create(
+            model="meta-llama/Meta-Llama-3-8B-Instruct",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=250,
+            temperature=0.7
+        )
+        raw_output = completion.choices[0].message.content.strip()
+        conclusion = raw_output.strip().split("\n\n")[0]
+    except Exception as e:
+        return {"error": f"Hugging Face API failed: {str(e)}"}
 
     return {
         "ticker": payload.ticker,
         "average_sentiment": round(avg_score, 4),
         "generated_conclusion": conclusion,
-        "articles_analyzed": len(articles)
+        "articles_analyzed": len(articles),
+        "articles": articles
     }
