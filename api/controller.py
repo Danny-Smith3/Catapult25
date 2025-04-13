@@ -17,8 +17,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Get Predictor Model Instance
-
+@app.on_event("startup")
+async def on_startup():
+    # Load the LLM model at startup
+    download_and_load_model()
 
 @app.get("/stock/{ticker}")
 async def get_stock_stats(ticker: str):
@@ -28,8 +30,6 @@ async def get_stock_stats(ticker: str):
         return JSONResponse(content=data, status_code=500)
 
     return JSONResponse(content=data)
-
-
 
 @app.get("/predictor/{ticker}")
 async def get_stock_graph(ticker: str):

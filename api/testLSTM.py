@@ -4,6 +4,7 @@ from LSTMLoader import download_extract_and_load_lstm_models
 def main():
     #download_extract_and_load_lstm_models()
     # Choose a ticker to test—make sure there is a corresponding model loaded.
+    download_extract_and_load_lstm_models()
     ticker = "AAPL"
     print(f"Testing prediction for ticker: {ticker}")
 
