@@ -1,5 +1,4 @@
 import os
-import requests
 from pydantic import BaseModel
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from newsdataapi import NewsDataApiClient
