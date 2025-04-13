@@ -193,16 +193,23 @@ def get_predicted_price(ticker):
         prev_model_pred = pred
 
     # Convert to a numpy array if needed
-    scaled_future_preds = np.array(scaled_future_preds)
+    scaled_future_preds = pd.Series(scaled_future_preds)
 
     #Remove first element of future_trial_data
     temp_future_data = future_trial_data.iloc[1:]
     temp_future_data['Scaled_Predicted_Close_1year'] = scaled_future_preds
     temp_future_data.index = temp_future_data.index + pd.DateOffset(years=1)
+
+
+    print(type(train_data.index))
+    print(type(train_data['Close'].squeeze()))
+    print(type(temp_future_data.index))
+    print(type(scaled_future_preds))
+
     # Create DataFrames as before:
     df_train = pd.DataFrame({
         'Date': train_data.index,
-        'Close': train_data['Close']
+        'Close': train_data['Close'].squeeze()
     })
     df_future = pd.DataFrame({
         'Date': temp_future_data.index,
@@ -211,7 +218,7 @@ def get_predicted_price(ticker):
     combined_df = pd.concat([df_train, df_future]).reset_index(drop=True)
     combined_df = combined_df.sort_values(by='Date').reset_index(drop=True)
 
-    plt.figure(figsize=(12, 6))
+    '''plt.figure(figsize=(12, 6))
     plt.plot(combined_df['Date'], combined_df['Close'], marker='o', linestyle='-', label='Close')
     plt.xlabel('Date')
     plt.ylabel('Close Price')
@@ -219,7 +226,7 @@ def get_predicted_price(ticker):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.show()
+    plt.show()'''
 
     '''plt.figure(figsize=(12, 6))
     plt.plot(train_data.index, train_data['Close'], label='Training Actual Close', linewidth=2)
@@ -239,11 +246,12 @@ def get_predicted_price(ticker):
     plt.close()'''
 
     # --- 8. Return the Graph Location and Prediction ---
+    # Convert the DataFrame to JSON format with separate arrays
     return JSONResponse(
         status_code=200,
         content={
             "message": f"Prediction graph generated for ticker {ticker}.",
-            "predicted_close_1year": future_trial_predictions[-1],
-            "figure_path": figure_path
+            "dates": combined_df['Date'].dt.strftime('%Y-%m-%d').tolist(),  # Convert dates to string format
+            "prices": [float(x) for x in combined_df['Close'].tolist()]
         }
     )
