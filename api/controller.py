@@ -6,7 +6,6 @@ from sentimentAI import generate_sentiment_summary, StockSentimentRequest
 from llm_loader import download_and_load_model
 from LSTM_helper import compute_sharpe_ratio, compute_ATR, compute_RSI, compute_bollinger_bands, get_predicted_price
 
-
 app = FastAPI()
 
 # Allow frontend to access the backend (CORS)
@@ -17,10 +16,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-@app.on_event("startup")
-def startup():
-    download_and_load_model()
 
 # Get Predictor Model Instance
 
@@ -46,4 +41,8 @@ async def get_stock_sentiment(ticker: str):
     request = StockSentimentRequest(ticker=ticker)
     result = generate_sentiment_summary(request)
     return result
+
+@app.get("/")
+def health_check():
+    return {"status": "ok"}
 

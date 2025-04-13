@@ -14,7 +14,7 @@ def get_stock_data(ticker: str) -> dict:
             "div_yield": round(info.get('dividendYield', 0) * 100, 2) if info.get('dividendYield') else None,
             "52_week_high": info.get('fiftyTwoWeekHigh', None),
             "52_week_low": info.get('fiftyTwoWeekLow', None),
-            "name:": info.get('displayName', None)
+            "name": info.get('displayName', None)
         }
 
     except Exception as e:
