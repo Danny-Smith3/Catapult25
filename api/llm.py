@@ -5,7 +5,7 @@ from functools import lru_cache
 def get_generator():
     return pipeline(
         "text-generation",
-        model="microsoft/phi-1_5",
+        model="tiiuae/falcon-rw-1b",
         device=-1,
         framework="pt"
     )
