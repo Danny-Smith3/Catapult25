@@ -202,7 +202,7 @@ def get_predicted_price(ticker):
     # Create DataFrames as before:
     df_train = pd.DataFrame({
         'Date': train_data.index,
-        'Close': train_data['Close']
+        'Close': train_data['Close'].squeeze()
     })
     df_future = pd.DataFrame({
         'Date': temp_future_data.index,

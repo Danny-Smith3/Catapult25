@@ -35,7 +35,7 @@ const StockChart = ({ xData, yData, splitDate }) => {
     }
     
     return (
-      <Plot
+        <Plot
         data={[
           // Historical data (solid line)
           {
@@ -43,8 +43,8 @@ const StockChart = ({ xData, yData, splitDate }) => {
             y: historicalY,
             type: "scatter",
             mode: "lines+markers",
-            marker: { color: "green" },
-            line: { color: "green", width: 2 },
+            marker: { color: "#3e8653" },
+            line: { color: "#3e8653", width: 2 },
             name: "Historical",
           },
           // Prediction data (dashed line)
@@ -53,27 +53,31 @@ const StockChart = ({ xData, yData, splitDate }) => {
             y: predictionY,
             type: "scatter",
             mode: "lines+markers",
-            marker: { color: "green" },
-            line: { color: "green", width: 2, dash: "dash" },
+            marker: { color: "#3e8653" },
+            line: { color: "#3e8653", width: 2, dash: "dash" },
             name: "Prediction",
           },
         ]}
         layout={{
           title: "Interactive Stock Price Chart",
-          xaxis: { title: "Date" },
-          yaxis: { title: "Price (USD)" },
+          xaxis: { title: "Date", color: "#ffffff" },
+          yaxis: { title: "Price (USD)", color: "#ffffff" },
           hovermode: "x unified",
           margin: { t: 50, l: 50, r: 50, b: 50 },
-          plot_bgcolor: "#0f0f0f",
-          paper_bgcolor: "#0f0f0f",
-          font: { color: "#00ff88" },
+          plot_bgcolor: "#2f2f2f",
+          paper_bgcolor: "#2f2f2f",
+          font: { color: "#ffffff" },
           showlegend: true,
-          legend: { x: 0, y: 1, font: { color: "#00ff88" } },
+          legend: {
+            x: 0,
+            y: 1,
+            font: { color: "#ffffff" },
+          },
         }}
         config={{ responsive: true }}
         useResizeHandler
         style={{ width: "100%", height: "100%" }}
-      />
+      />      
     );
   };
 

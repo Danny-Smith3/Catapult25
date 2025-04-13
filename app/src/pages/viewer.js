@@ -70,6 +70,7 @@ const Viewer = () => {
         }
         setLoading(true);
         const readData = await getData(ticker);
+        /*const readPredict = await getPredict(ticker) */
         const readPredict = getPredict;
         console.log(readData);
         if (readData === null || readData['error'] != null || readData['open'] === null) {
