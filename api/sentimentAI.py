@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import os
 
 # Load model for RAG-like summarization/analysis
-generator = none
+generator = None
 
 # Sentiment analyzer
 analyzer = SentimentIntensityAnalyzer()
