@@ -16,10 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.on_event("startup")
-def startup():
-    download_and_load_model()
-
 # Get Predictor Model Instance
 
 
