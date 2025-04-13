@@ -3,10 +3,8 @@ from transformers import pipeline
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from newsdataapi import NewsDataApiClient
 from dotenv import load_dotenv
+from controller import generator  # import the loaded model
 import os
-
-# Load model for RAG-like summarization/analysis
-generator = None
 
 # Sentiment analyzer
 analyzer = SentimentIntensityAnalyzer()
@@ -15,16 +13,6 @@ analyzer = SentimentIntensityAnalyzer()
 load_dotenv()
 NEWSDATA_API_KEY = os.getenv("NEWSDATA_API_KEY")
 newsdata_client = NewsDataApiClient(apikey=NEWSDATA_API_KEY)
-
-@app.on_event("startup")
-def load_model():
-    global generator
-    generator = pipeline(
-        "text-generation",
-        model="microsoft/phi-1_5",
-        device=-1,
-        framework="pt"
-    )
 
 class StockSentimentRequest(BaseModel):
     ticker: str
