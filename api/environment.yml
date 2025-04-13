@@ -25,3 +25,5 @@ dependencies:
       - torch
       - python-dotenv
       - accelerate
+      - boto3
+      - joblib 
