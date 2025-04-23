@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { useEffect } from 'react';
 import './viewer.css';
 import SearchBar from '../components/searchbar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ErrorPopup from '../components/errorpopup';
 import BullitLogo from '../assets/bullit64.png';
+import StockChart from '../components/stockChart';
 
 const API_BASE = "https://catapult25.onrender.com"
 
@@ -16,25 +18,113 @@ const getData = (ticker) => fetch(`${API_BASE}/stock/${ticker}`)
             return null;
         });
 
-const getSentiment = (ticker) => fetch(`${API_BASE}/sentiment/${ticker}`)
-        .then((response) => response.json())
+const getPredict = (ticker) => fetch(`${API_BASE}/predictor/${ticker}`)
+        .then((res) => res.json())
         .then((data) => {
-            return data;
+            return data
         })
         .catch((error) => {
-            return null;
-        });
+            return null
+        })
+
+/*const getPredict = {
+    x: [
+        '2025-01-01', '2025-01-02', '2025-01-03', '2025-01-04', '2025-01-05',
+        '2025-01-06', '2025-01-07', '2025-01-08', '2025-01-09', '2025-01-10',
+        '2025-01-11', '2025-01-12', '2025-01-13', '2025-01-14', '2025-01-15'
+      ],
+    y: [
+        150.23, 152.88, 151.76, 153.21, 154.10,
+        153.75, 155.12, 156.03, 154.80, 153.90,
+        155.30, 156.50, 157.20, 156.85, 158.00
+      ]
+}*/
+
+const today = new Date().toISOString().split('T')[0];
+
+/*const today = '2025-01-10'*/
+
+const getSentiment = (ticker) => fetch(`${API_BASE}/sentiment/${ticker}`)
+    .then((response) => response.json())
+    .then((data) => {
+        return data;
+    })
+    .catch((error) => {
+        return null;
+    });
 
 const Viewer = () => {
     const [ticker, setTicker] = useState();
     const [loading, setLoading] = useState(false);
+    const [sentimentLoading, setSentimentLoading] = useState(true);
+    const [predictionLoading, setPredictionLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
+    const [sentiment, setSentiment] = useState({'average_sentiment': 0.5, 'generated_conclusion': 'No sentiment data available.', 'articles_analyzed': 0});
+    const [predict, setPredict] = useState({'dates': [], 'prices': []});
+
+    const [dates, setDates] = useState([]);
+    const [prices, setPrices] = useState([]);
 
     const navigate = useNavigate();
     const location = useLocation();
-    let stockTicker = location.state.stockTicker;
+    const stockTicker = location.state?.stockTicker;
+
     let data = location.state.stockData;
-    let sentiment = {'average_sentiment': 0.16734, 'generated_conclusion': 'This is a bad stock to buy. It will not increase at all according to multiple sources that are extremely reputable.'};
+    const didFetchSentiment = useRef(false);
+    const previousTicker = useRef(null);
+
+    useEffect(() => {
+        if (!stockTicker) {
+            return
+        }
+
+        if (previousTicker.current !== stockTicker) {
+            didFetchSentiment.current = false;
+            previousTicker.current = stockTicker;
+        }
+
+        if (didFetchSentiment.current) {
+            return
+        }
+
+        didFetchSentiment.current = true;
+
+        const fetchSentiment = async () => {
+            setSentimentLoading(true);
+            const readSentiment = await getSentiment(stockTicker);
+            if (readSentiment === null || readSentiment['error'] != null || readSentiment['average_sentiment'] === null) {
+                setSentiment({'average_sentiment': 0.5, 'generated_conclusion': 'No sentiment data available.', 'articles_analyzed': 0});
+                setSentimentLoading(false);
+                return;
+            }
+            setSentiment(readSentiment);
+            setSentimentLoading(false);
+        };
+
+        const fetchPrediction = async () => {
+            setPredictionLoading(true);
+            const readSentiment = await getPredict(stockTicker);
+            if (readSentiment === null || readSentiment['error'] != null || readSentiment['average_sentiment'] === null) {
+                setPredict({'dates': [], 'prices': []});
+                setPredictionLoading(false);
+                return;
+            }
+            setSentiment(readSentiment);
+            const filtered = sentiment['dates'].map((date, index) => ({
+                date,
+                price: sentiment['prices'][index]
+            }))
+            .filter((item) => new Date(item.date) >= new Date(today));
+            setDates(filtered.map((item) => item.date));
+            setPrices(filtered.map((item) => item.price));
+            setPredictionLoading(false);
+        };
+    
+        if (stockTicker) {
+            fetchPrediction();
+            fetchSentiment();
+        }
+    }, [stockTicker]);
 
     const search = async (ticker) => {
         if (ticker === undefined || ticker === "") {
@@ -50,9 +140,9 @@ const Viewer = () => {
             return;
         }
         data = readData;
-        stockTicker = ticker;
         setTicker("");
         setLoading(false);
+        setSentimentLoading(true);
         navigate('/viewer', {
             state:  {stockTicker: ticker, stockData: data} 
         });
@@ -123,23 +213,23 @@ const Viewer = () => {
                             <p className='viewer-label-text'>3M:</p>
                             <p className='viewer-label-text'>1Y:</p>
                         </div>
-                        <div className='viewer-stats-vals'>
-                            <p className={100 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>100</p>
-                            <p className={110 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>110</p>
-                            <p className={120 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>120</p>
-                            <p className={130 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>130</p>
-                            <p className={140 > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>140</p>
-                        </div>
+                        {predictionLoading ? <div className="loading-circle"></div> : <div className='viewer-stats-vals'>
+                            <p className={prices[1] > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>{prices[1]}</p>
+                            <p className={prices[5] > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>{prices[5]}</p>
+                            <p className={prices[22] > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>{prices[22]}</p>
+                            <p className={prices[66] > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>{prices[66]}</p>
+                            <p className={prices[prices.length - 1] > data['open'] ? 'viewer-label-text viewer-value-green' : 'viewer-label-text viewer-value-red'}>{prices[prices.length - 1]}</p>
+                        </div>}
                         <div className='viewer-stats-buff'></div>
                     </div>
                 </div>
                 <div className='viewer-charts'>
-                    <div className='viewer-graph'>
-                        <p>{stockTicker} Graph</p>
-                    </div>
+                    {predictionLoading ? <div className="loading-circle"></div> : <div className='viewer-graph'>
+                        <StockChart xData={predict['dates']} yData={predict['prices']} splitDate={today}/>
+                    </div>}
                     <div className='viewer-data'>
                         <h2 className='viewer-data-title'>{data['name:']} Sentiment</h2>
-                        <div className='viewer-sentiment'>
+                        {sentimentLoading ? <div className="loading-circle"></div> : <div className='viewer-sentiment'>
                             <div className='viewer-ratings'>
                                 <div className='viewer-ratings-label'>
                                     <p className='viewer-label-text'>Raw Score: {parseFloat(sentiment['average_sentiment'].toFixed(3))}</p>
@@ -153,7 +243,7 @@ const Viewer = () => {
                                 <p className='viewer-label-text'>Conclusion:</p>
                                 <div className='viewer-conclusion-text'><p className='viewer-label-text'>{sentiment['generated_conclusion']}</p></div>
                             </div>
-                        </div>
+                        </div>}
                     </div>
                 </div>
                 <ErrorPopup message={errorMessage} />

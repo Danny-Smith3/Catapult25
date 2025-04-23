@@ -1,12 +1,17 @@
 import os
 import boto3
 import tarfile
-import shutil
 from tensorflow.keras.models import load_model
 from dotenv import load_dotenv
+from keras.layers import LSTM as OriginalLSTM
 
 # Global list to hold loaded LSTM models
 LOADED_MODELS = []
+
+class CleanLSTM(OriginalLSTM):
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("time_major", None)  # Remove the problematic argument
+        super().__init__(*args, **kwargs)
 
 def download_extract_and_load_lstm_models():
     load_dotenv()
@@ -80,7 +85,7 @@ def download_extract_and_load_lstm_models():
         # Load the LSTM model using Keras
         print(f"🧠 Loading LSTM model from {model_file_path}...")
         try:
-            lstm_model = load_model(model_file_path)
+            lstm_model = load_model(model_file_path, compile=False, custom_objects={"LSTM": CleanLSTM})
             LOADED_MODELS.append({
                 "name": os.path.splitext(filename)[0],
                 "model": lstm_model

@@ -3,8 +3,8 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sentimentAI import generate_sentiment_summary, StockSentimentRequest
-from llm_loader import download_and_load_model
-from LSTM_helper import compute_sharpe_ratio, compute_ATR, compute_RSI, compute_bollinger_bands, get_predicted_price
+from LSTMLoader import download_extract_and_load_lstm_models
+from LSTM_helper import get_predicted_price
 
 app = FastAPI()
 
@@ -17,8 +17,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Get Predictor Model Instance
-
+@app.on_event("startup")
+async def on_startup():
+    # Load the LLM model at startup
+    download_extract_and_load_lstm_models()
 
 @app.get("/stock/{ticker}")
 async def get_stock_stats(ticker: str):
@@ -28,8 +30,6 @@ async def get_stock_stats(ticker: str):
         return JSONResponse(content=data, status_code=500)
 
     return JSONResponse(content=data)
-
-
 
 @app.get("/predictor/{ticker}")
 async def get_stock_graph(ticker: str):

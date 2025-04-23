@@ -64,7 +64,7 @@
 .viewer {
     text-align: center;
     cursor: default;
-    overflow: hidden;
+    overflow: auto;
 }
   
 .viewer-header {
@@ -84,7 +84,7 @@
     justify-content: space-between;
     width: 95%;
     padding: 0 2.5%;
-    background-color: #585757;
+    background-color: #242424;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Add shadow for elevation */
     position: relative; /* Ensure it stays above other elements */
     z-index: 10; /* Place it above other content */
@@ -228,7 +228,6 @@
   justify-content: space-evenly;
   align-items: center;
   height: auto;
-  padding-bottom: 1em;
   box-sizing: border-box;
 }
 
